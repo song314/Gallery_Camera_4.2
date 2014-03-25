@@ -77,6 +77,7 @@ public class FocusOverlayManager {
     private boolean mLockAeAwbNeeded;
     private boolean mAeAwbLock;
     private Matrix mMatrix;
+    private boolean mLockExWbAfterFocus = false; // lock the white balance and exposure after focus TODO finish the full function
 
     private PieRenderer mPieRenderer;
 
@@ -280,7 +281,7 @@ public class FocusOverlayManager {
             if (mFocusArea != null) {
                 mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
             }
-            if (shutterButtonPressed) {
+            if (shutterButtonPressed || mLockExWbAfterFocus) {
                 // Lock AE & AWB so users can half-press shutter and recompose.
                 lockAeAwbIfNeeded();
             }
@@ -345,6 +346,11 @@ public class FocusOverlayManager {
                     mState == STATE_SUCCESS || mState == STATE_FAIL)) {
             cancelAutoFocus();
         }
+
+        if (mLockAeAwbNeeded && mAeAwbLock) {
+            unlockAeAwbIfNeeded();
+        }
+
         // Initialize variables.
         int focusWidth = mPieRenderer.getSize();
         int focusHeight = mPieRenderer.getSize();
