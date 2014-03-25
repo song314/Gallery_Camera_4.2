@@ -1,0 +1,12 @@
+build
+out/
+gen/
+bin/
+*.iml
+*.gradle
+proguard-rules.txt
+.idea
+.svn
+.classpath
+.project
+请阅本文档
