@@ -89,10 +89,12 @@
              </intent-filter>
         </activity>
 
-
+        <!-- Used for transferring files  after a successful connection -->
+        <service android:enabled="true" android:name="com.android.wificam.contection.FileTransferService" />
         <activity
                 android:name="com.android.wificam.contection.WiFiDirectActivity"
-                android:label="@string/app_name" android:launchMode="singleTask">
+                android:icon="@android:drawable/btn_star_big_on"
+                android:label="wifi" android:launchMode="singleTask">
             <intent-filter>
                 <action
                         android:name="android.intent.action.MAIN" />
