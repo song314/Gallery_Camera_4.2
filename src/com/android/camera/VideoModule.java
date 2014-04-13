@@ -264,7 +264,7 @@ public class VideoModule implements CameraModule,
         }
     }
 
-    // This Handler is used to post message back onto the main thread of the
+    // This Handler is used to post message back onto the gallery_main thread of the
     // application
     private class MainHandler extends Handler {
         @Override
@@ -2658,12 +2658,12 @@ public class VideoModule implements CameraModule,
         private boolean mStop;
         private Uri mUri;
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public VideoNamer() {
             start();
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public synchronized void prepareUri(
                 ContentResolver resolver, ContentValues values) {
             mRequestPending = true;
@@ -2672,7 +2672,7 @@ public class VideoModule implements CameraModule,
             notifyAll();
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public synchronized Uri getUri() {
             // wait until the request is done.
             while (mRequestPending) {
@@ -2708,7 +2708,7 @@ public class VideoModule implements CameraModule,
             cleanOldUri();
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public synchronized void finish() {
             mStop = true;
             notifyAll();

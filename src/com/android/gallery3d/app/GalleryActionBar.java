@@ -297,7 +297,7 @@ public class GalleryActionBar implements OnNavigationListener {
                 mTitles, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Need to lock rendering when operations invoked by system UI (main thread) are
+                // Need to lock rendering when operations invoked by system UI (gallery_main thread) are
                 // modifying slot data used in GL thread for rendering.
                 mActivity.getGLRoot().lockRenderThread();
                 try {
@@ -373,7 +373,7 @@ public class GalleryActionBar implements OnNavigationListener {
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
         if (itemPosition != mCurrentIndex && mClusterRunner != null
                 || mAlbumModeListener != null) {
-            // Need to lock rendering when operations invoked by system UI (main thread) are
+            // Need to lock rendering when operations invoked by system UI (gallery_main thread) are
             // modifying slot data used in GL thread for rendering.
             mActivity.getGLRoot().lockRenderThread();
             try {

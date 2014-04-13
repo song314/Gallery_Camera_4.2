@@ -23,21 +23,21 @@ import com.android.camera.ui.*;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.gallery3d.R;
 
-public class WifiCameraController extends PieController
+public class WifiCameraClientController extends PieController
         implements MoreSettingPopup.Listener,
         ListPrefSettingPopup.Listener {
     private static String TAG = "CAM_photocontrol";
     private static float FLOAT_PI_DIVIDED_BY_TWO = (float) Math.PI / 2;
     private final String mSettingOff;
 
-    private WifiCameraModule mModule;
+    private WifiCameraClientModule mModule;
     private String[] mOtherKeys;
     // First level popup
     private MoreSettingPopup mPopup;
     // Second level popup
     private AbstractSettingPopup mSecondPopup;
 
-    public WifiCameraController(CameraActivity activity, WifiCameraModule module, PieRenderer pie) {
+    public WifiCameraClientController(CameraActivity activity, WifiCameraClientModule module, PieRenderer pie) {
         super(activity, pie);
         mModule = module;
         mSettingOff = activity.getString(R.string.setting_off_value);

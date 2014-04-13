@@ -32,6 +32,11 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <supports-screens android:smallScreens="false"
             android:normalScreens="true" android:largeScreens="true"
             android:anyDensity="true" />
@@ -84,10 +89,20 @@
              </intent-filter>
         </activity>
 
+
+        <activity
+                android:name="com.android.wificam.contection.WiFiDirectActivity"
+                android:label="@string/app_name" android:launchMode="singleTask">
+            <intent-filter>
+                <action
+                        android:name="android.intent.action.MAIN" />
+                <category
+                        android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name="com.android.gallery3d.app.Gallery" android:label="@string/app_name"
                 android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.APP_GALLERY" />
@@ -170,7 +185,7 @@
             </intent-filter>
         </activity-alias>
 
-        <!-- This activity receives USB_DEVICE_ATTACHED Intents and springboards to main Gallery activity. -->
+        <!-- This activity receives USB_DEVICE_ATTACHED Intents and springboards to gallery_main Gallery activity. -->
         <activity android:name="com.android.gallery3d.app.UsbDeviceActivity" android:label="@string/app_name"
                 android:taskAffinity=""
                 android:launchMode="singleInstance">

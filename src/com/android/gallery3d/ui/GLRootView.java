@@ -47,7 +47,7 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 // The root component of all <code>GLView</code>s. The rendering is done in GL
-// thread while the event handling is done in the main thread.  To synchronize
+// thread while the event handling is done in the gallery_main thread.  To synchronize
 // the two threads, the entry points of this package need to synchronize on the
 // <code>GLRootView</code> instance unless it can be proved that the rendering
 // thread won't access the same thing as the method. The entry points include:
@@ -579,7 +579,7 @@ public class GLRootView extends GLSurfaceView
 
     // We need to unfreeze in the following methods and in onPause().
     // These methods will wait on GLThread. If we have freezed the GLRootView,
-    // the GLThread will wait on main thread to call unfreeze and cause dead
+    // the GLThread will wait on gallery_main thread to call unfreeze and cause dead
     // lock.
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {

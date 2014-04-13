@@ -27,66 +27,34 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Face;
-import android.hardware.Camera.FaceDetectionListener;
-import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PictureCallback;
-import android.hardware.Camera.Size;
+import android.hardware.Camera;
+import android.hardware.Camera.*;
 import android.location.Location;
 import android.media.CameraProfile;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.ConditionVariable;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.os.MessageQueue;
-import android.os.SystemClock;
+import android.os.*;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.OrientationEventListener;
-import android.view.SurfaceHolder;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.android.camera.CameraManager.CameraProxy;
-import com.android.camera.ui.AbstractSettingPopup;
-import com.android.camera.ui.FaceView;
-import com.android.camera.ui.PieRenderer;
-import com.android.camera.ui.PopupManager;
-import com.android.camera.ui.PreviewSurfaceView;
-import com.android.camera.ui.RenderOverlay;
-import com.android.camera.ui.Rotatable;
-import com.android.camera.ui.RotateLayout;
-import com.android.camera.ui.RotateTextToast;
-import com.android.camera.ui.TwoStateImageView;
-import com.android.camera.ui.ZoomRenderer;
+import com.android.camera.ui.*;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.CropImage;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.wificam.WfiCameraHost;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 
-public class PhotoModule
+public class WifiCameraClientModule
     implements CameraModule,
     FocusOverlayManager.Listener,
     CameraPreference.OnPreferenceChangedListener,
@@ -287,7 +255,7 @@ public class PhotoModule
     private FocusOverlayManager mFocusManager;
 
     private PieRenderer mPieRenderer;
-    private PhotoController mPhotoControl;
+    private WifiCameraClientController mPhotoControl;
 
     private ZoomRenderer mZoomRenderer;
 
@@ -553,7 +521,7 @@ public class PhotoModule
     private void initializeAfterCameraOpen() {
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
-            mPhotoControl = new PhotoController(mActivity, this, mPieRenderer);
+            mPhotoControl = new WifiCameraClientController(mActivity, this, mPieRenderer);
             mPhotoControl.setListener(this);
             mPieRenderer.setPieListener(this);
         }
@@ -736,7 +704,7 @@ public class PhotoModule
             mFocusManager.setFaceView(mFaceView);
             mCameraDevice.setFaceDetectionListener(new FaceDetectionListener() {
                 @Override
-                public void onFaceDetection(Face[] faces, android.hardware.Camera camera) {
+                public void onFaceDetection(Face[] faces, Camera camera) {
                     mFaceView.setFaces(faces);
                 }
             });
@@ -864,7 +832,7 @@ public class PhotoModule
     }
 
     private final class ShutterCallback
-            implements android.hardware.Camera.ShutterCallback {
+            implements Camera.ShutterCallback {
         @Override
         public void onShutter() {
             mShutterCallbackTime = System.currentTimeMillis();
@@ -876,7 +844,7 @@ public class PhotoModule
     private final class PostViewPictureCallback implements PictureCallback {
         @Override
         public void onPictureTaken(
-                byte [] data, android.hardware.Camera camera) {
+                byte [] data, Camera camera) {
             mPostViewPictureCallbackTime = System.currentTimeMillis();
             Log.v(TAG, "mShutterToPostViewCallbackTime = "
                     + (mPostViewPictureCallbackTime - mShutterCallbackTime)
@@ -887,7 +855,7 @@ public class PhotoModule
     private final class RawPictureCallback implements PictureCallback {
         @Override
         public void onPictureTaken(
-                byte [] rawData, android.hardware.Camera camera) {
+                byte [] rawData, Camera camera) {
             mRawPictureCallbackTime = System.currentTimeMillis();
             Log.v(TAG, "mShutterToRawCallbackTime = "
                     + (mRawPictureCallbackTime - mShutterCallbackTime) + "ms");
@@ -903,7 +871,7 @@ public class PhotoModule
 
         @Override
         public void onPictureTaken(
-                final byte [] jpegData, final android.hardware.Camera camera) {
+                final byte [] jpegData, final Camera camera) {
             if (mPaused) {
                 return;
             }
@@ -991,10 +959,10 @@ public class PhotoModule
     }
 
     private final class AutoFocusCallback
-            implements android.hardware.Camera.AutoFocusCallback {
+            implements Camera.AutoFocusCallback {
         @Override
         public void onAutoFocus(
-                boolean focused, android.hardware.Camera camera) {
+                boolean focused, Camera camera) {
             if (mPaused) return;
 
             mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
@@ -1006,10 +974,10 @@ public class PhotoModule
 
     @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
     private final class AutoFocusMoveCallback
-            implements android.hardware.Camera.AutoFocusMoveCallback {
+            implements Camera.AutoFocusMoveCallback {
         @Override
         public void onAutoFocusMoving(
-            boolean moving, android.hardware.Camera camera) {
+            boolean moving, Camera camera) {
                 mFocusManager.onAutoFocusMoving(moving);
         }
     }
@@ -2048,6 +2016,7 @@ public class PhotoModule
     // Only called by UI thread.
     private void setupPreview() {
         mFocusManager.resetTouchFocus();
+
         startPreview();
         setCameraState(IDLE);
         startFaceDetection();
@@ -2097,8 +2066,8 @@ public class PhotoModule
         }
 
         Log.v(TAG, "startPreview");
+        mCameraDevice.setPreviewCallback(new WfiCameraHost());
         mCameraDevice.startPreviewAsync();
-
         mFocusManager.onPreviewStarted();
 
         if (mSnapshotOnIdle) {
@@ -2417,6 +2386,27 @@ public class PhotoModule
         }
     }
 
+    Toast toast;
+    Thread t = new Thread() {
+        @Override
+        public void run() {
+
+
+
+            while (true) {
+                SystemClock.sleep(200);
+                if (mCameraDevice != null) {
+                    Parameters param = mCameraDevice.getParameters();
+                    if (param != null) {
+
+                    }
+                }
+            }
+
+
+        }
+    };
+
     private void switchCamera() {
         if (mPaused) return;
 
@@ -2567,7 +2557,7 @@ public class PhotoModule
         // Make sure popup is brought up with the right orientation
         mPopup.setOrientation(mOrientationCompensation, false);
         mPopup.setVisibility(View.VISIBLE);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+        LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
         ((FrameLayout) mRootView).addView(mPopup, lp);

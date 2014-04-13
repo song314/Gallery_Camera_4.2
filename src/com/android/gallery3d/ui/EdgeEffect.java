@@ -44,7 +44,7 @@ import com.android.gallery3d.R;
  * false after drawing, the edge effect's animation is not yet complete and the widget
  * should schedule another drawing pass to continue the animation.</p>
  *
- * <p>When drawing, widgets should draw their main content and child views first,
+ * <p>When drawing, widgets should draw their gallery_main content and child views first,
  * usually by invoking <code>super.draw(canvas)</code> from an overridden <code>draw</code>
  * method. (This will invoke onDraw and dispatch drawing to child views as needed.)
  * The edge effect may then be drawn on top of the view's content using the

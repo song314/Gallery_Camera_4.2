@@ -17,15 +17,12 @@
 package com.android.gallery3d.app;
 
 import android.app.Dialog;
-import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -65,7 +62,7 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                     WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         }
 
-        setContentView(R.layout.main);
+        setContentView(R.layout.gallery_main);
 
         if (savedInstanceState != null) {
             getStateManager().restoreFromState(savedInstanceState);

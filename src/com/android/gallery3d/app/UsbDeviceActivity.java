@@ -24,7 +24,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 /* This Activity does nothing but receive USB_DEVICE_ATTACHED events from the
- * USB service and springboards to the main Gallery activity
+ * USB service and springboards to the gallery_main Gallery activity
  */
 public final class UsbDeviceActivity extends Activity {
 

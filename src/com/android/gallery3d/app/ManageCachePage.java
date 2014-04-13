@@ -104,7 +104,7 @@ public class ManageCachePage extends ActivityState implements
                 boolean changed, int left, int top, int right, int bottom) {
             // Hack: our layout depends on other components on the screen.
             // We assume the other components will complete before we get a change
-            // to run a message in main thread.
+            // to run a message in gallery_main thread.
             if (!mLayoutReady) {
                 mHandler.sendEmptyMessage(MSG_REQUEST_LAYOUT);
                 return;

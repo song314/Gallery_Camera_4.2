@@ -38,7 +38,7 @@ import java.util.ArrayList;
 // The render() method is called in a separate thread. Before calling
 // dispatchTouchEvent() and layout(), GLRoot acquires a lock to avoid the
 // rendering thread running at the same time. If there are other entry points
-// from main thread (like a Handler) in your GLView, you need to call
+// from gallery_main thread (like a Handler) in your GLView, you need to call
 // lockRendering() if the rendering thread should not run at the same time.
 //
 public class GLView {

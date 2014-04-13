@@ -54,7 +54,7 @@ import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 
-public class WifiCameraModule
+public class WifiCameraHostModule
     implements CameraModule,
     FocusOverlayManager.Listener,
     CameraPreference.OnPreferenceChangedListener,
@@ -255,7 +255,7 @@ public class WifiCameraModule
     private FocusOverlayManager mFocusManager;
 
     private PieRenderer mPieRenderer;
-    private WifiCameraController mPhotoControl;
+    private WifiCameraHostController mPhotoControl;
 
     private ZoomRenderer mZoomRenderer;
 
@@ -272,7 +272,7 @@ public class WifiCameraModule
 
     private PreviewGestures mGestures;
 
-    // The purpose is not to block the main thread in onCreate and onResume.
+    // The purpose is not to block the gallery_main thread in onCreate and onResume.
     private class CameraStartUpThread extends Thread {
         private volatile boolean mCancelled;
 
@@ -311,7 +311,7 @@ public class WifiCameraModule
     }
 
     /**
-     * This Handler is used to post message back onto the main thread of the
+     * This Handler is used to post message back onto the gallery_main thread of the
      * application
      */
     private class MainHandler extends Handler {
@@ -521,7 +521,7 @@ public class WifiCameraModule
     private void initializeAfterCameraOpen() {
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
-            mPhotoControl = new WifiCameraController(mActivity, this, mPieRenderer);
+            mPhotoControl = new WifiCameraHostController(mActivity, this, mPieRenderer);
             mPhotoControl.setListener(this);
             mPieRenderer.setPieListener(this);
         }
@@ -993,14 +993,14 @@ public class WifiCameraModule
     }
 
     // We use a queue to store the SaveRequests that have not been completed
-    // yet. The main thread puts the request into the queue. The saver thread
+    // yet. The gallery_main thread puts the request into the queue. The saver thread
     // gets it from the queue, does the work, and removes it from the queue.
     //
-    // The main thread needs to wait for the saver thread to finish all the work
+    // The gallery_main thread needs to wait for the saver thread to finish all the work
     // in the queue, when the activity's onPause() is called, we need to finish
     // all the work, so other programs (like Gallery) can see all the images.
     //
-    // If the queue becomes too long, adding a new request will block the main
+    // If the queue becomes too long, adding a new request will block the gallery_main
     // thread until the queue length drops below the threshold (QUEUE_LIMIT).
     // If we don't do this, we may face several problems: (1) We may OOM
     // because we are holding all the jpeg data in memory. (2) We may ANR
@@ -1013,13 +1013,13 @@ public class WifiCameraModule
         private ArrayList<SaveRequest> mQueue;
         private boolean mStop;
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public ImageSaver() {
             mQueue = new ArrayList<SaveRequest>();
             start();
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public void addImage(final byte[] data, Uri uri, String title,
                 Location loc, int width, int height, int orientation) {
             SaveRequest r = new SaveRequest();
@@ -1050,7 +1050,7 @@ public class WifiCameraModule
                 SaveRequest r;
                 synchronized (this) {
                     if (mQueue.isEmpty()) {
-                        notifyAll();  // notify main thread in waitDone
+                        notifyAll();  // notify gallery_main thread in waitDone
 
                         // Note that we can only stop after we saved all images
                         // in the queue.
@@ -1069,12 +1069,12 @@ public class WifiCameraModule
                         r.orientation);
                 synchronized (this) {
                     mQueue.remove(0);
-                    notifyAll();  // the main thread may wait in addImage
+                    notifyAll();  // the gallery_main thread may wait in addImage
                 }
             }
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public void waitDone() {
             synchronized (this) {
                 while (!mQueue.isEmpty()) {
@@ -1087,7 +1087,7 @@ public class WifiCameraModule
             }
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public void finish() {
             waitDone();
             synchronized (this) {
@@ -1121,12 +1121,12 @@ public class WifiCameraModule
         private Uri mUri;
         private String mTitle;
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public ImageNamer() {
             start();
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public synchronized void prepareUri(ContentResolver resolver,
                 long dateTaken, int width, int height, int rotation) {
             if (rotation % 180 != 0) {
@@ -1142,7 +1142,7 @@ public class WifiCameraModule
             notifyAll();
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public synchronized Uri getUri() {
             // wait until the request is done.
             while (mRequestPending) {
@@ -1159,7 +1159,7 @@ public class WifiCameraModule
             return uri;
         }
 
-        // Runs in main thread, should be called after getUri().
+        // Runs in gallery_main thread, should be called after getUri().
         public synchronized String getTitle() {
             return mTitle;
         }
@@ -1185,7 +1185,7 @@ public class WifiCameraModule
             cleanOldUri();
         }
 
-        // Runs in main thread
+        // Runs in gallery_main thread
         public synchronized void finish() {
             mStop = true;
             notifyAll();
@@ -1986,6 +1986,7 @@ public class WifiCameraModule
     @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void closeCamera() {
         if (mCameraDevice != null) {
+            mCameraDevice.setPreviewCallback(null);
             mCameraDevice.setZoomChangeListener(null);
             if(ApiHelper.HAS_FACE_DETECTION) {
                 mCameraDevice.setFaceDetectionListener(null);

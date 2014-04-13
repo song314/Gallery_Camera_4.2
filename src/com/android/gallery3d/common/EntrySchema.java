@@ -296,7 +296,7 @@ public final class EntrySchema {
         String tableName = mTableName;
         Utils.assertTrue(tableName != null);
 
-        // Add the CREATE TABLE statement for the main table.
+        // Add the CREATE TABLE statement for the gallery_main table.
         StringBuilder sql = new StringBuilder("CREATE TABLE ");
         sql.append(tableName);
         sql.append(" (_id INTEGER PRIMARY KEY AUTOINCREMENT");

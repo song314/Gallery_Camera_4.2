@@ -1456,7 +1456,7 @@ public class PhotoView extends GLView {
         }
     }
 
-    // Runs in main thread.
+    // Runs in gallery_main thread.
     private void switchFocus() {
         if (mHolding != 0) return;
         switch (switchPosition()) {
@@ -1495,7 +1495,7 @@ public class PhotoView extends GLView {
     }
 
     // Switch to the previous or next picture if the hit position is inside
-    // one of their boxes. This runs in main thread.
+    // one of their boxes. This runs in gallery_main thread.
     private void switchToHitPicture(int x, int y) {
         if (mPrevBound < 0) {
             Rect r = mPositionController.getPosition(-1);

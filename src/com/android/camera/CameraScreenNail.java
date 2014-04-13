@@ -61,7 +61,7 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
     private SwitchAnimManager mSwitchAnimManager = new SwitchAnimManager();
     private int mAnimState = ANIM_NONE;
     private RawTexture mAnimTexture;
-    // Some methods are called by GL thread and some are called by main thread.
+    // Some methods are called by GL thread and some are called by gallery_main thread.
     // This protects mAnimState, mVisible, and surface texture. This also makes
     // sure some code are atomic. For example, requestRender and setting
     // mAnimState.

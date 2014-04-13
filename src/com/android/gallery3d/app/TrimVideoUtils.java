@@ -15,7 +15,7 @@
  */
 
 // Modified example based on mp4parser google code open source project.
-// http://code.google.com/p/mp4parser/source/browse/trunk/examples/src/main/java/com/googlecode/mp4parser/ShortenExample.java
+// http://code.google.com/p/mp4parser/source/browse/trunk/examples/src/gallery_main/java/com/googlecode/mp4parser/ShortenExample.java
 
 package com.android.gallery3d.app;
 
