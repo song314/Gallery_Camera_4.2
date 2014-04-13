@@ -86,7 +86,7 @@ public class CameraActivity extends ActivityBase
             mCurrentModule = new VideoModule();
             mCurrentModuleIndex = VIDEO_MODULE_INDEX;
         } else {
-            mCurrentModule = new PhotoModule();
+            mCurrentModule = new WifiCameraModule();
             mCurrentModuleIndex = PHOTO_MODULE_INDEX;
         }
         mCurrentModule.init(this, mFrame, true);
@@ -178,7 +178,7 @@ public class CameraActivity extends ActivityBase
                 mCurrentModule = new VideoModule();
                 break;
             case PHOTO_MODULE_INDEX:
-                mCurrentModule = new PhotoModule();
+                mCurrentModule = new WifiCameraModule();
                 break;
             case PANORAMA_MODULE_INDEX:
                 mCurrentModule = new PanoramaModule();
